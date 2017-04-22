@@ -13,7 +13,7 @@ using TShockAPI.Hooks;
 
 namespace AntiSpam
 {
-	[ApiVersion(1, 26)]
+	[ApiVersion(2, 1)]
 	public class AntiSpam : TerrariaPlugin
 	{
 		Config Config = new Config();
@@ -80,7 +80,7 @@ namespace AntiSpam
 
 				if (text.Trim().Length <= Config.ShortLength)
 					Spams[e.Who] += Config.ShortWeight;
-				else if ((double)text.Where(c => Char.IsUpper(c)).Count() / text.Length >= Config.CapsRatio)
+				else if ((double)text.Count(Char.IsUpper) / text.Length >= Config.CapsRatio)
 					Spams[e.Who] += Config.CapsWeight;
 				else
 					Spams[e.Who] += Config.NormalWeight;
@@ -167,21 +167,21 @@ namespace AntiSpam
 			{
 				if (Config.DisableBossMessages && e.number2 == 175 && e.number3 == 75 && e.number4 == 255)
 				{
-					if (e.text.StartsWith("Eye of Cthulhu") || e.text.StartsWith("Eater of Worlds") ||
-						e.text.StartsWith("Skeletron") || e.text.StartsWith("King Slime") ||
-						e.text.StartsWith("The Destroyer") || e.text.StartsWith("The Twins") ||
-						e.text.StartsWith("Skeletron Prime") || e.text.StartsWith("Wall of Flesh") ||
-						e.text.StartsWith("Plantera") || e.text.StartsWith("Golem") || e.text.StartsWith("Brain of Cthulhu") ||
-						e.text.StartsWith("Queen Bee") || e.text.StartsWith("Duke Fishron") ||
-						e.text.StartsWith("Moon Lord"))
+					if (e.text.ToString().StartsWith("Eye of Cthulhu") || e.text.ToString().StartsWith("Eater of Worlds") ||
+						e.text.ToString().StartsWith("Skeletron") || e.text.ToString().StartsWith("King Slime") ||
+						e.text.ToString().StartsWith("The Destroyer") || e.text.ToString().StartsWith("The Twins") ||
+						e.text.ToString().StartsWith("Skeletron Prime") || e.text.ToString().StartsWith("Wall of Flesh") ||
+						e.text.ToString().StartsWith("Plantera") || e.text.ToString().StartsWith("Golem") || e.text.ToString().StartsWith("Brain of Cthulhu") ||
+						e.text.ToString().StartsWith("Queen Bee") || e.text.ToString().StartsWith("Duke Fishron") ||
+						e.text.ToString().StartsWith("Moon Lord"))
 					{
 						e.Handled = true;
 					}
 				}
 				if (Config.DisableOrbMessages && e.number2 == 50 && e.number3 == 255 && e.number4 == 130)
 				{
-					if (e.text == "A horrible chill goes down your spine..." ||
-						e.text == "Screams echo around you...")
+					if (string.Equals(e.text.ToString(), "A horrible chill goes down your spine...", StringComparison.Ordinal) ||
+					    string.Equals(e.text.ToString(), "Screams echo around you...", StringComparison.Ordinal))
 					{
 						e.Handled = true;
 					}

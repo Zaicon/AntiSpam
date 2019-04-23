@@ -13,12 +13,12 @@ using TShockAPI.Hooks;
 
 namespace AntiSpam
 {
-	[ApiVersion(1, 26)]
+	[ApiVersion(2,1)]
 	public class AntiSpam : TerrariaPlugin
 	{
 		Config Config = new Config();
-		DateTime[] Times = new DateTime[256];
-		double[] Spams = new double[256];
+		readonly DateTime[] Times = new DateTime[256];
+		readonly double[] Spams = new double[256];
 
 		public override string Author
 		{
@@ -48,7 +48,6 @@ namespace AntiSpam
 			if (disposing)
 			{
 				ServerApi.Hooks.GameInitialize.Deregister(this, OnInitialize);
-				ServerApi.Hooks.NetSendData.Deregister(this, OnSendData);
 				ServerApi.Hooks.ServerChat.Deregister(this, OnChat);
 				ServerApi.Hooks.ServerLeave.Deregister(this, OnLeave);
 				PlayerHooks.PlayerCommand -= OnPlayerCommand;
@@ -58,7 +57,6 @@ namespace AntiSpam
 		public override void Initialize()
 		{
 			ServerApi.Hooks.GameInitialize.Register(this, OnInitialize);
-			ServerApi.Hooks.NetSendData.Register(this, OnSendData);
 			ServerApi.Hooks.ServerChat.Register(this, OnChat);
 			ServerApi.Hooks.ServerLeave.Register(this, OnLeave);
 			PlayerHooks.PlayerCommand += OnPlayerCommand;
@@ -158,33 +156,6 @@ namespace AntiSpam
 							}
 						}
 						return;
-				}
-			}
-		}
-		void OnSendData(SendDataEventArgs e)
-		{
-			if (e.MsgId == PacketTypes.ChatText && !e.Handled)
-			{
-				if (Config.DisableBossMessages && e.number2 == 175 && e.number3 == 75 && e.number4 == 255)
-				{
-					if (e.text.StartsWith("Eye of Cthulhu") || e.text.StartsWith("Eater of Worlds") ||
-						e.text.StartsWith("Skeletron") || e.text.StartsWith("King Slime") ||
-						e.text.StartsWith("The Destroyer") || e.text.StartsWith("The Twins") ||
-						e.text.StartsWith("Skeletron Prime") || e.text.StartsWith("Wall of Flesh") ||
-						e.text.StartsWith("Plantera") || e.text.StartsWith("Golem") || e.text.StartsWith("Brain of Cthulhu") ||
-						e.text.StartsWith("Queen Bee") || e.text.StartsWith("Duke Fishron") ||
-						e.text.StartsWith("Moon Lord"))
-					{
-						e.Handled = true;
-					}
-				}
-				if (Config.DisableOrbMessages && e.number2 == 50 && e.number3 == 255 && e.number4 == 130)
-				{
-					if (e.text == "A horrible chill goes down your spine..." ||
-						e.text == "Screams echo around you...")
-					{
-						e.Handled = true;
-					}
 				}
 			}
 		}
